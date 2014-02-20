@@ -7,6 +7,7 @@
 //
 
 #import "RMDocument.h"
+#import "Person.h"
 
 @implementation RMDocument
 
@@ -14,7 +15,7 @@
 {
     self = [super init];
     if (self) {
-        // Add your subclass-specific initialization here.
+        employees = [NSMutableArray array];
     }
     return self;
 }
@@ -56,4 +57,60 @@
     return YES;
 }
 
+- (IBAction)addEmp:(id)sender {
+    Person *p = [[Person alloc] init];
+    [employees addObject:p];
+    NSLog(@"Added task '%@'", p);
+    [_tableView reloadData];
+    NSLog(@"Employee size: '%lu'", [employees count]);
+}
+
+- (IBAction)removeEmp:(id)sender
+{
+    NSIndexSet *rows = [_tableView selectedRowIndexes];
+    // Is the selection empty?
+    if ([rows count] == 0)
+    {
+        NSBeep();
+        return;
+    }
+    [employees removeObjectsAtIndexes:rows];
+    [_tableView reloadData];
+}
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tv
+{
+    NSUInteger numEmps = [employees count];
+    NSLog(@"The count is %lu", (unsigned long)numEmps);
+    return numEmps;
+}
+
+- (id)tableView:(NSTableView *)tv objectValueForTableColumn:(NSTableColumn *)tc row:(NSInteger)row
+{
+    NSString *id = [tc identifier];
+    Person *p = [employees objectAtIndex:row];
+    return [p valueForKey:id];
+}
+
+- (void)tableView:(NSTableView *)tv setObjectValue:(id)person forTableColumn:(NSTableColumn *)tc row:(NSInteger)row
+{
+    
+    NSString *identifier = [tc identifier];
+    Person *p = [employees objectAtIndex:row];
+    [p setValue:person forKey:identifier];
+}
+
+- (void)tableView:(NSTableView *)tv sortDescriptorsDidChange:(NSArray *)od
+{
+    NSArray *nd = [tv sortDescriptors];
+    [employees sortUsingDescriptors:nd];
+    [tv reloadData];
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
+    NSString *methodName = NSStringFromSelector(aSelector);
+    NSLog(@"respondsToSelector:%@", methodName);
+    return [super respondsToSelector:aSelector];
+}
 @end

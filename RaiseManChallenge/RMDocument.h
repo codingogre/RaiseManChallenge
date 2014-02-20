@@ -9,5 +9,12 @@
 #import <Cocoa/Cocoa.h>
 
 @interface RMDocument : NSDocument
+{
+    NSMutableArray *employees;
+}
+- (IBAction)addEmp:(id)sender;
+- (IBAction)removeEmp:(id)sender;
+@property (weak) IBOutlet NSTableView *tableView;
+
 
 @end
